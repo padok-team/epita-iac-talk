@@ -10,7 +10,7 @@ export let options = {
 
 export default function () {
   // Make an HTTP GET request to your Go application's /fibonacci endpoint
-  let response = http.get('http://localhost:8000/fibonacci');
+  let response = http.get('https://epita-demo.padok.school/fibonacci');
 
   // Check if the response status code is 200
   if (response.status !== 200) {
