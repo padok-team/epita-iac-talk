@@ -1,8 +1,15 @@
 locals {
   user_data = <<EOF
 #!/bin/bash
-cd /home/ubuntu/back-source
-npx prisma migrate deploy
+cd /home/ubuntu
+wget https://github.com/padok-team/epita-iac-talk/releases/download/v1.0/fibo-server_linux_amd64
+chmod +x fibo-server_linux_amd64
+sudo mv fibo-server_linux_amd64 /usr/bin/fibo-server
+wget https://raw.githubusercontent.com/padok-team/epita-iac-talk/main/webapp.service
+sudo mv webapp.service /etc/systemd/system/webapp.service
+sudo systemctl daemon-reload
+sudo systemctl enable webapp.service
+sudo systemctl start webapp.service
 EOF
 }
 
@@ -29,15 +36,9 @@ resource "aws_security_group" "app" {
     cidr_blocks = [module.vpc.vpc_cidr_block]
   }
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 8000
+    to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = [module.vpc.vpc_cidr_block]
-  }
-  ingress {
-    from_port   = -1
-    to_port     = -1
-    protocol    = "icmp"
     cidr_blocks = [module.vpc.vpc_cidr_block]
   }
   egress {

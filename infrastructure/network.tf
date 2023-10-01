@@ -9,12 +9,12 @@ locals {
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 3.0"
+  version = "~> 5.0"
 
   name = local.vpc_name
   cidr = local.vpc_cidr
 
-  azs             = ["${var.aws_region}a", "${var.aws_region}b", "${var.aws_region}c"]
+  azs             = ["eu-west-3a", "eu-west-3b", "eu-west-3c"]
   public_subnets  = local.public_subnets
   private_subnets = local.private_subnets
 
@@ -27,13 +27,4 @@ module "vpc" {
   vpc_tags = {
     CostCenter = "Network"
   }
-}
-
-### Bastion -------------------------------------------------------------------
-
-module "bastion" {
-  source = "https://github.com/padok-team/terraform-aws-bastion-ssm"
-
-  instance_type       = "t4g.nano"
-  vpc_zone_identifier = module.vpc.private_subnets_ids
 }

@@ -18,10 +18,11 @@ module "alb" {
   # Instance Target group (referenced by Auto-Scaling Group)
   target_groups = [
     {
-      name_prefix      = "fibo-app-"
-      backend_protocol = "HTTP"
-      backend_port     = 8000
-      target_type      = "instance"
+      name_prefix          = "fibo-"
+      backend_protocol     = "HTTP"
+      backend_port         = 8000
+      target_type          = "instance"
+      deregistration_delay = 5
       health_check = {
         enabled             = true
         path                = "/healthz"
@@ -92,7 +93,7 @@ data "aws_route53_zone" "zone" {
 }
 
 # SSL certificate for Application Load Balancer
-module "app" {
+module "acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> 4.0"
 
@@ -111,8 +112,8 @@ resource "aws_route53_record" "app" {
   type    = "A"
 
   alias {
-    name                   = module.back_alb.lb_dns_name
-    zone_id                = module.back_alb.lb_zone_id
+    name                   = module.alb.lb_dns_name
+    zone_id                = module.alb.lb_zone_id
     evaluate_target_health = true
   }
 }
